@@ -1,87 +1,86 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-import BasketList from './BasketList';
-import GoodsList from './GoodsList';
-import Search from './Search';
+import GoodsList from './GoodsList'
+import Search from './Search'
 
-import { goods } from '../data/goods';
+import { goods } from '../data/goods'
+import Header from './Header'
+import { Container } from '@mui/material'
+import Basket from './Basket'
 
 const App = () => {
-    const [order, setOrder] = useState([]);
-    const [search, setSearch] = useState('');
-    const [products, setProducts] = useState(goods);
+  const [ order, setOrder ] = useState([])
+  const [ search, setSearch ] = useState('')
+  const [ products, setProducts ] = useState(goods)
+  const [ cartOpen, setCartOpen ] = useState(false)
 
-    const handleChange = (e) => {
-        if (!e.target.value) {
-            setProducts(goods);
-            setSearch('');
-            return;
-        }
+  const handleChange = (e) => {
+    if (!e.target.value) {
+      setProducts(goods)
+      setSearch('')
+      return
+    }
 
-        setSearch(e.target.value);
-        setProducts(
-            products.filter((good) =>
-                good.name.toLowerCase().includes(e.target.value.toLowerCase())
-            ))
-    };
+    setSearch(e.target.value)
+    setProducts(
+      products.filter((good) =>
+        good.name.toLowerCase().includes(e.target.value.toLowerCase())
+      ))
+  }
 
-    const addToOrder = (goodsItem) => {
-        let quantity = 1;
+  const addToOrder = (goodsItem) => {
+    let quantity = 1
 
-        const indexInOrder = order.findIndex(
-            (item) => item.id === goodsItem.id
-        );
+    const indexInOrder = order.findIndex(
+      (item) => item.id === goodsItem.id
+    )
 
-        if (indexInOrder > -1) {
-            quantity = order[indexInOrder].quantity + 1;
+    if (indexInOrder > -1) {
+      quantity = order[indexInOrder].quantity + 1
 
-            setOrder(order.map((item) => {
-                    if (item.id !== goodsItem.id) return item;
+      setOrder(order.map((item) => {
+          if (item.id !== goodsItem.id) return item
 
-                    return {
-                        id: item.id,
-                        name: item.name,
-                        price: item.price,
-                        quantity,
-                    };
-                }),
-            );
-        } else {
-            setOrder([
-                    ...order,
-                    {
-                        id: goodsItem.id,
-                        name: goodsItem.name,
-                        price: goodsItem.price,
-                        quantity,
-                    },
-                ],
-            );
-        }
-    };
+          return {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity,
+          }
+        }),
+      )
+    } else {
+      setOrder([
+          ...order,
+          {
+            id: goodsItem.id,
+            name: goodsItem.name,
+            price: goodsItem.price,
+            quantity,
+          },
+        ],
+      )
+    }
+  }
 
-    const removeFromOrder = (goodsItem) => {
-        setOrder(order.filter((item) => item.id !== goodsItem));
-    };
+  const removeFromOrder = (goodsItem) => {
+    setOrder(order.filter((item) => item.id !== goodsItem))
+  }
 
-    return (
-        <div className='App'>
-            <div className='container'>
-                <Search
-                    value={search}
-                    onChange={handleChange}
-                />
-                <GoodsList
-                    goods={products}
-                    setOrder={addToOrder}
-                />
-                <BasketList
-                    order={order}
-                    setOrder={removeFromOrder}
-                />
-            </div>
-        </div>
-    );
+  return (
+    <>
+      <Header orderLen={ order.length } handlerCart={ () => setCartOpen(true) }/>
+      <Container sx={ { mt: '1.5rem' } }>
+        <Search value={ search } onChange={ handleChange }/>
+        <GoodsList
+          goods={ products }
+          setOrder={ addToOrder }
+        />
+      </Container>
+      <Basket order={ order } removeFromOrder={ removeFromOrder } cartOpen={ cartOpen }
+              closeCart={ () => setCartOpen(false) }/>
+    </>
+  )
 }
 
-export default App;
+export default App

@@ -1,7 +1,14 @@
-const Search = (props) => {
-    const { onChange, value } = props;
+import { TextField } from '@mui/material'
 
-    return <input type='search' value={value} onChange={onChange} />;
-};
+const Search = ({ onChange, value }) => (
+  <TextField
+    label="Search"
+    type="search"
+    value={ value }
+    onChange={ onChange }
+    sx={ { mb: '1rem' } }
+    fullWidth
+  />
+)
 
-export default Search;
+export default Search
